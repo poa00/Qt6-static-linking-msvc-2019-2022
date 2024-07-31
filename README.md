@@ -1,151 +1,151 @@
-#### RU: Это инструкция для создание статической линковки(сборки) для QT 6.2.0, с помощью данной инструкции вы сможете делать portable версии своих проектов.
+# Build Statically-Linked QT from Sources
 
-Внимание! Все параметры выставлены по ПРИМЕРУ, у вас значение полей может быть другое!
+This is an instruction for creating a static linking (assembly) for QT 6.2.0, with the help of this instruction you will be able to make portable versions of your projects.
 
-## Необходимые компоненты
+>[!Attention]
+>All parameters are set according to the EXAMPLE, you may have a different value of the fields!
 
-- Online installer(https://www.qt.io/download-qt-installer?hsCtaTracking=99d9dd4f-5681-48d2-b096-470725510d34%7C074ddad0-fdef-4e53-8aa8-5e8a876d6ab4)
-- Visual Studio 2019(https://visualstudio.microsoft.com/ru/downloads/)
-- Исходники Qt
-- Strawberry Perl 5+ (https://strawberryperl.com/)
-- Python 3.5+ (https://www.python.org/)
-- CMake 3.25+ (https://cmake.org/download/)
-- Ninja (https://github.com/ninja-build/ninja/releases)
+## Prerequisites
 
-## Установка необходимых компонентов
+1. [Online installer](https://www.qt.io/download-qt-installer?hsCtaTracking=99d9dd4f-5681-48d2-b096-470725510d34%7C074ddad0-fdef-4e53-8aa8-5e8a876d6ab4)
+2. [Visual Studio 2019](https://visualstudio.microsoft.com/ru/downloads/)
+3. Qt source code
+4. [Strawberry Perl 5+](https://strawberryperl.com/)
+5. [Python 3.5+](https://www.python.org/)
+6. CMake 3.25+ (https://cmake.org/download/)
+7. Ninja (https://github.com/ninja-build/ninja/releases)
 
-1) Установка QT допустима с параметрами которые вам требуются, обязательно должны быть установлены исходники QT(Sources)
-2) Установка Visual Studio 2019 допустима с параметрами которые вам требуются
-3) Установка Strawberry Perl желательна с настройками по умолчанию
-4) Установка Python желательна с настройками по умолчанию(галочка Add to PATH, должна быть включена)
-5) Установка CMake желательна с настройками по умолчанию
-6) Ninja скачивается как архив и распаковывается в удобное вам место, у меня это "C:\ninja". После распаковки там должен быть только исполняемый файл "ninja.exe"
+## Installation of the necessary components
 
-## Проверка расположения необходимых компонентов
+- QT installation is acceptable with the parameters you require, QT(Sources) sources must be installed
+- Installing Visual Studio 2019 is valid with the settings you require
+- Installing Strawberry Perl is desirable with the default settings
+- Python installation is desirable with default settings (Add to PATH checkbox, must be enabled)
+- Installing CMake is desirable with default settings
+- Ninja is downloaded as an archive and unpacked to a convenient place for you, for me it is "C:\ninja". After unpacking, there should only be the executable "ninja.exe"
 
-Проверять обязательно в CMD запущенной от имени администратора, в скобках команды которые нужно вызывать!
-К проверке обязательны:
+## Checking the location of the required components
+- Be sure to check in CMD running as administrator, in parentheses commands to be called! The following are mandatory for verification:
 
-1) Strawberry Perl (where perl.exe)
-2) Python (where python.exe)
-3) CMake (where cmake.exe)
-4) Ninja (where ninja.exe)
+   1. Strawberry Perl (`where perl.exe`)
+   2. Python (`where python.exe`)
+   3. CMake (`where cmake.exe`)
+   4. Ninja (`where ninja.exe)`
 
-В случае если выдаёт "ИНФОРМАЦИЯ: не удается найти файлы по заданным шаблонам.", то нужно вручную указать путь для нужного компонента в CMD
+If it gives "INFORMATION: I can't find files according to the specified templates.", then you need to manually specify the path for the desired component in CMD
 
-```shell script
-set "<ИМЯ КОМПОНЕНТА>_ROOT=<ПУТЬ ДО ИСПОЛНЯЕМЫХ ФАЙЛОВ КОМПОНЕНТА>"
-set PATH=%<ИМЯ КОМПОНЕНТА>_ROOT%;%PATH%
 ```
-Пример:
-```shell script
+set "<COMPONENT NAME>_ROOT=<PATH TO COMPONENT EXECUTIVE FILES>"
+set PATH=%<COMPONENT NAME>_ROOT%;%PATH%
+Example:
+
 set "CMAKE_ROOT=C:\Program Files\CMake\bin"
 set PATH=%CMAKE_ROOT%;%PATH%
 ```
 
-После проделанной процедуры вызовите команду where для требуемого компонента, ошибка должна пропасть!
+After the procedure is done, call the where command for the required component, the error should disappear!
 
-## Порядок установки и сборки
+## Installation and assembly procedure
 
-1. Скачиваем и устанавливаем необходимые компоненты, проверяя их командой where, в случае ошибок делаем процедуры описаные выше!
-2. Скачиваем QT Online Installer и запускаем. Проходим авторизацию и другие этапы пока не попадаем в окно выбора компонентов!
-3. Выбираем версию Qt 6.2.0, раскрываем пункт и ставим галочки:
-- [x] MSVC 2019 64-bit
-- [x] Sources
-- [x] Qt Quick 3D
-- [x] Qt 5 Compatibility Module
-- [x] Qt Shader Tools
-- [x] Additional Libraries
-- [x] Qt Debug Information Files
-- [x] Qt Quick Timeline
+1. Download and install the necessary components, checking them with the where command, in case of errors, do the procedures described above!
+2. Download QT Online Installer and run it. Go through authorization and other stages until you get to the component selection window!
+3. Select the Qt 6.2.0 version, expand the item and check the boxes:
 
-Спускаемся ниже где расположен Developer and Designer Tools, раскрываем пункт:
+      - [X] MSVC 2019 64-bit
+      - [X] Sources
+      - [X] Qt Quick 3D
+      - [X] Qt 5 Compatibility Module
+      - [X] Qt Shader Tools
 
-- [x] Qt Creator X.X.X
-- [x] Qt Creator X.X.X CDB Debugger Support
-- [x] Debugging Tools for Windows
-Убираем галочки на CMake и Ninja, так как мы их установили ранее.
-Внимание! Такие настройки ставил я, вы можете убирать галочки или включать новые!
-Ждём окончания установки! 
-4. Устанавливаем Visual Studio(если он не установлен), тут главное выбрать SDK который совместим под вашу версию QT и средства компиляции!
-5. Открываем x64 Native Tools Command Prompt for VS 2019
-5.1 Переходим в директорию с установленным QT (в моём случае это D:\QT\6.2.0
-   
-   Если на диске C:
-   ```shell script
-   cd C:\QT\6.2.0\
-   ```
-   
-   Если на диске D:
-   ```shell script
-   cd /d D:\QT\6.2.0\
-   ```
-   
-5.2 Создаем папку для сборки
+4. Additional Libraries
+      - [x] Qt Debug Information Files
+      - [x] Qt Quick Timeline
 
-   ```shell script
-   mkdir build
-   cd build
-   ```
-6. Запускаем конфигурационный скрипт
+5. Go down below where the Developer and Designer Tools are located, expand the item:
+      - [X] Qt Creator X.X.X
 
-   ```shell script
-   <Путь до исходников Qt>\configure.bat -debug-and-release -static -static-runtime -opensource -confirm-license -platform win32-msvc -qt-zlib -qt-libpng -qt-libjpeg -nomake examples -nomake tests -no-opengl -skip qtscript -skip qtquick3d -prefix "<Путь куда будет собираться статическая версия>"
-   ```
-   - `<Путь до исходников Qt>` - как правило находится в папке с установленным QT, в моём случае: D:\QT\6.2.0\Src
-   - `<Путь куда будет собираться статическая версия>` - в моём случае это папка с установленным Qt D:\QT\6.2.0\MSCV-Static
-   # "<" и ">" не вписываем, должно получится вот так(это пример):
-   ```shell script
-   D:\QT\6.2.0\Src\configure.bat -debug-and-release -static -static-runtime -opensource -confirm-license -platform win32-msvc -qt-zlib -qt-libpng -qt-libjpeg -nomake examples -nomake tests -no-opengl -skip qtscript -skip qtquick3d -prefix "D:\QT\6.2.0\MSCV-Static"
-   ```
+ ## Qt Creator X.X.X CDB Debugger Support
 
-   Ключи:
-   - `skip <module>` - исключает из процесса сборки отдельный подмодуль
-   - `nomake examples` - исключает из процесса сборки примеры программ
-   - `nomake tests` - исключает из процесса сборки тесты
-   - `platform <platform>` - определяет платформу, для которой будет собран Qt, в данном случае Windows с MSVC
-   - `no-opengl` - не использовать OpenGL для отрисовки интерфейса
-   - `qt-zlib`, `qt-libpng`, `qt-libjpeg` - использовать библиотеки `zlib`, `libpng`, `libjpeg` поставляемые вместе с Qt
-   - `opensource` - использовать open source вариант Qt
-   - `confirm-license` - автоматически принять лицензию Qt
-   - `debug-and-release`, `release`, `debug` - варианты сборок
-   - `static`, `static-runtime` - включить статическую компоновку Qt и runtime
-   - `prefix <prefix>` - путь до папки, в которую будут скопированы откомпилированные файлы Qt
-6.1 Ждём окончания процесса! После этого вконце будет написан результат, без ошибок он выглядит так:
-Qt is now configured for building. Just run 'cmake --build . --parallel'
+Debugging Tools for Windows: Unchecking the CMake and Ninja checkboxes, as we installed them earlier. 
 
-ТУТ НАЧАЛО
-``"Once everything is built, you must run 'ninja install'
+>[!Attention]
+>I set such settings, you can remove the checkboxes or enable new ones! We are waiting for the installation to be completed!
+
+Install Visual Studio (if it is not installed), the main thing here is to choose an SDK that is compatible for your version of QT and compilation tools!
+
+Open x64 Native Tools Command Prompt for VS 2019 5.1 Go to the directory with QT installed (in my case, it is D:\QT\6.2.0
+
+**If on the C drive:**
+```
+cd C:\QT\6.2.0\
+```
+
+**If on drive D:**
+```
+cd /d D:\QT\6.2.0\
+```
+
+## 5.2 
+
+Create a folder to build
+```
+mkdir build
+cd build
+Run the configuration script
+<Path to source code of Qt>\configure.bat -debug-and-release -static -static-runtime -opensource -confirm-license -platform win32-msvc -qt-zlib -qt-libpng -qt-libjpeg -nomake examples -nomake tests -no-opengl -skip qtscript -skip qtquick3d -prefix "<Output Directory>"
+```
+
+### Options
+
+`skip <module>` - excludes a separate submodule from the assembly process
+`nomake examples` - excludes sample programs from the build process
+`nomake tests` - excludes tests from the build process
+`platform <platform>` - defines the platform for which Qt will be built, in this case Windows with MSVC
+`no-opengl` - Do not use OpenGL to render the interface
+`qt-zlib` - use the libraries shipped with Qtqt-libpngqt-libjpegzliblibpnglibjpeg
+`opensource` - use the open source version of Qt
+`confirm-license` - automatically accept the Qt license
+`debug-and-release` - assembly optionsreleasedebug
+`static` - enable static Qt and runtime linkingstatic-runtime
+`prefix <prefix>` - the path to the folder to which the compiled Qt files will be copied 6.1 Waiting for the end of the process! After that, the result will be written at the end, without errors it looks like this: Qt is now configured for building. Just run 
+
+```
+cmake --build . --parallel
+```
+
+### HERE IS THE BEGINNING 
+***
+"Once everything is built, you must run `ninja install` 
 Qt will be installed into 'D:/QT/6.2.0/MSCV-Static'
 
-To configure and build other Qt modules, you can use the following convenience script:
-        D:/QT/6.2.0/MSCV-Static/bin/qt-configure-module.bat
+To configure and build other Qt modules, you can use the following convenience script: D:/QT/6.2.0/MSCV-Static/bin/qt-configure-module.bat
 
 If reconfiguration fails for some reason, try to remove 'CMakeCache.txt' from the build directory
+```
+-- Configuring done (306.1s) -- Generating done (22.6s) CMake Warning: Manually-specified variables were not used by the project:
+```
+### BUILD_qtscript
 
--- Configuring done (306.1s)
--- Generating done (22.6s)
-CMake Warning:
-  Manually-specified variables were not used by the project:
-
-    BUILD_qtscript
-
-
+```
 -- Build files have been written to: D:/QT/6.2.0/build"``
-ТУТ КОНЕЦ
+```
+***
+### THAT'S THE END
 
 
-6.2 Воспользуйтесь переводчиком если что либо из написаного выше не понятно!
-7. QT настроен для сборки, запускаем команду 
-```shell script
-   cmake --build . --parallel
-   ```
-7.1 Ждём окончания настроки(может занять много времени, зависит от ЦП и скорости записи), вывод консоли должен быть такой:
+- QT is configured to build, run the
+
+```
+cmake --build . --parallel
+```
+
+- Wait for the end of the setup (it can take a long time, depends on the CPU and write speed), the console output should look like this:
 ```
 [11790/11790] Linking CXX static library qtbase\qml\QtWebView\qtwebviewquickplugind.lib
 ```
-8. После окончания 7.1 запускаем команду 
-```shell script
-   ninja install
-   ```
-8.1 После окончания сборки, можем перейти в QT для настройки профиля и комплекта!
+After 7.1 is finished, run the
+```
+ninja install
+```
+
+After the assembly is finished, we can go to QT to set up the profile and kit!
